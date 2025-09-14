@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="cssbase.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous">
+    <title>Pedidos de Frutas</title>
+    <style>
+        body {
+            background-image: url('fruta.jpg');
+            background-size: contain;
+            position: relative;
+            background-repeat: no-repeat;
+            background-position: top center;
+            background-size: 100% 700px;
+        }
+
+        header {
+            background: rgba(78, 78, 78, 0.8);
+            position: fixed;
+            right: 2vw;
+            top: 2vh;
+            padding: 7px 15px;
+            border-radius: 10px;
+            z-index: 100;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .item {
+            background-color: white !important;
+        }
+
+        .content {
+            width: 95%;
+            margin: 100px auto 50px auto;
+            border-radius: 20px;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid rgb(175, 175, 175);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+
+        .info {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info .item {
+            flex: 1;
+            padding: 10px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .nd,
+        .na {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .fruit-section {
+            margin-bottom: 40px;
+            border-radius: 15px;
+            padding: 15px;
+            background-color: #e4e4e4;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cust {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.15);
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cust:hover {
+            transform: scale(1.01);
+        }
+
+        .cust-body {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 0.9rem;
+        }
+
+        .cInfo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cInfo .img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgb(220, 220, 220);
+            background-size: cover;
+        }
+
+        .cInfo div p {
+            margin: 2px 0;
+        }
+
+        .item-actions i {
+            font-size: 1.3rem;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .neg {
+            background-color: #23a191;
+            color: white;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="../cliente/chatlist.html"><i class="fa-solid fa-comments"></i></a>
+    </header>
+
+    <div class="content">
+
+        <!-- Seção Morango -->
+        <div class="fruit-section">
+            <h1>Morango</h1>
+            <div class="info">
+                <div class="item">
+                    <p>Preço médio negociado</p>
+                    <p>R$ 30,00 /Kg</p>
+                </div>
+                <div class="item">
+                    <p>Qtd. Disponível - 4,7 Kg.</p>
+                </div>
+            </div>
+
+            <h2>Pedidos</h2>
+            <div class="nd">
+                <div class="cust" onclick="toggleDetails(this)">
+                    <div class="cInfo">
+                        <div class="img" style="background-image:url('https://randomuser.me/api/portraits/men/32.jpg')">
+                        </div>
+                        <div>
+                            <p class="name">João</p>
+                            <p>Fruta: Morango</p>
+                            <p>Qtd: 100</p>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <i class="fa-solid fa-circle-check" style="color:#63E6BE;"
+                            onclick="acceptOrder(event,'João','Morango',100)"></i>
+                        <i class="fa-solid fa-circle-xmark" style="color:#e60000;" onclick="rejectOrder(event)"></i>
+                    </div>
+                    <div class="cust-body">
+                        <p>Endereço: Rua das Flores, 123</p>
+                        <p>Telefone: (41) 99999-8888</p>
+                        <p>Observações: Entregar pela manhã</p>
+                    </div>
+                </div>
+
+                <div class="cust" onclick="toggleDetails(this)">
+                    <div class="cInfo">
+                        <div class="img"
+                            style="background-image:url('https://randomuser.me/api/portraits/women/45.jpg')"></div>
+                        <div>
+                            <p class="name">Maria</p>
+                            <p>Fruta: Morango</p>
+                            <p>Qtd: 100</p>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <i class="fa-solid fa-circle-check" style="color:#63E6BE;"
+                            onclick="acceptOrder(event,'Maria','Morango',100)"></i>
+                        <i class="fa-solid fa-circle-xmark" style="color:#e60000;" onclick="rejectOrder(event)"></i>
+                    </div>
+                    <div class="cust-body">
+                        <p>Endereço: Av. Brasil, 456</p>
+                        <p>Telefone: (41) 98888-7777</p>
+                        <p>Observações: Entregar à tarde</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção Pêssego -->
+        <div class="fruit-section">
+            <h1>Pêssego</h1>
+            <div class="info">
+                <div class="item">
+                    <p>Preço médio negociado</p>
+                    <p>R$ 25,00 /Kg</p>
+                </div>
+                <div class="item">
+                    <p>Qtd. Disponível - 3,2 Kg.</p>
+                </div>
+            </div>
+
+            <h2>Pedidos</h2>
+            <div class="nd">
+                <div class="cust" onclick="toggleDetails(this)">
+                    <div class="cInfo">
+                        <div class="img" style="background-image:url('https://randomuser.me/api/portraits/men/52.jpg')">
+                        </div>
+                        <div>
+                            <p class="name">Pedro</p>
+                            <p>Fruta: Pêssego</p>
+                            <p>Qtd: 50</p>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <i class="fa-solid fa-circle-check" style="color:#63E6BE;"
+                            onclick="acceptOrder(event,'Pedro','Pêssego',50)"></i>
+                        <i class="fa-solid fa-circle-xmark" style="color:#e60000;" onclick="rejectOrder(event)"></i>
+                    </div>
+                    <div class="cust-body">
+                        <p>Endereço: Rua do Sol, 789</p>
+                        <p>Telefone: (41) 97777-6666</p>
+                        <p>Observações: Entregar antes do almoço</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navbar">
+        <div><a href="buscaProd.html"><span class="icon icon-home"></span></a><span>Home</span></div>
+        <div>
+            <a href="index.html"><i class="fa-solid fa-cart-shopping"></i></a>
+            <span>Pedidos</span>
+        </div>
+        <div>
+            <a href="estoque.html"><i class="fa-solid fa-box"></i></a>
+            <span>Estoque</span>
+        </div>
+        <div>
+            <a href="money.html"><i class="fa-solid fa-dollar-sign"></i></a>
+            <span>Financeiro</span>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(card) {
+            const body = card.querySelector('.cust-body');
+            if (body) {
+                const isVisible = body.style.display === 'block';
+                body.style.display = isVisible ? 'none' : 'block';
+            }
+        }
+
+        function acceptOrder(e, clientName, fruit, qty) {
+            e.stopPropagation();
+            const message = `Olá, me chamo João e estarei atendendo seu pedido de ${qty} Kg de ${fruit}.`;
+            window.location.href = `../cliente/chat.html?user=${encodeURIComponent(clientName)}&msg=${encodeURIComponent(message)}`;
+        }
+
+        function rejectOrder(e) {
+            e.stopPropagation();
+            alert('Pedido recusado.');
+        }
+    </script>
+
+</body>
+
+</html>

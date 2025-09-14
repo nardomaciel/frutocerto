@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Busca de Frutas</title>
+    <link rel="stylesheet" href="cssbase.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+      
+
+        html,
+        body {
+            width: 100%;
+            overflow-x: hidden;
+            /* remove rolagem horizontal */
+        }
+        .as{
+            padding: 10px;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            padding-bottom: 60px;
+            background-image: url('morango.jpg');
+            background-repeat: no-repeat;
+            background-position: top center;
+            background-size: 100% 700px;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        /* Lista de produtos */
+        .produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 10px;
+        }
+
+        .card-info h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .card-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 93%;
+            margin-bottom: 12px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .modal-content textarea {
+            resize: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-salvar {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-cancelar {
+            background: #f44336;
+            color: white;
+        }
+
+
+
+
+        .unidades-opcoes {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .unidades-opcoes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Filtros */
+        .filtros {
+            display: flex;
+            gap: 10px;
+            margin: 10px;
+
+        }
+
+        .filtros input {
+            max-width: 42%;
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="espaco"></div>
+
+    <header>
+
+        <a href="chatlist.html"><i class="fa-solid fa-comments"></i></a>
+
+    </header>
+
+    <div class="container">
+        <div class="card as">
+
+            <div class="filtros">
+                <input type="text" id="filtro-fruta" placeholder="Buscar pela fruta">
+                <input type="text" id="filtro-cidade" placeholder="Buscar por cidade">
+            </div>
+
+
+            <div class="filtros">
+                <label style="display:flex; align-items:center; gap:5px;">
+                    <input type="checkbox" id="filtro-proximo"> Mais próximos de mim
+                </label>
+            </div>
+            <div class="produtos" id="lista-produtos">
+
+                <!-- Morango -->
+                <div class="card" data-fruta="Morango" data-cidade="Cascavel" data-lat="-24.9556" data-lng="-53.4556"
+                    onclick="abrirModal('Morango')">
+                    <img src="https://www.vidarural.pt/wp-content/uploads/sites/5/2019/01/morango-vida-rural.jpg"
+                        alt="Morango">
+                    <div class="card-info">
+                        <h3>Morango</h3>
+                        <p>Preço medio: R$ 10,00 / kg</p>
+                    </div>
+                </div>
+
+                <!-- Banana -->
+                <div class="card" data-fruta="Banana" data-cidade="Toledo" data-lat="-24.7247" data-lng="-53.7406"
+                    onclick="abrirModal('Banana')">
+                    <img src="https://cdn.pixabay.com/photo/2016/09/03/20/48/bananas-1642706_640.jpg" alt="Banana">
+                    <div class="card-info">
+                        <h3>Banana</h3>
+                        <p>Preço medio: R$ 5,00 / kg</p>
+                    </div>
+                </div>
+
+                <!-- Laranja -->
+                <div class="card" data-fruta="Laranja" data-cidade="Foz do Iguaçu" data-lat="-25.5163"
+                    data-lng="-54.5850" onclick="abrirModal('Laranja')">
+                    <img src="https://sabedoriapura.live/wp-content/uploads/2020/03/quais-sao-os-beneficios-da-laranja-para-a-saude-2-768x473.jpg"
+                        alt="Laranja">
+                    <div class="card-info">
+                        <h3>Laranja</h3>
+                        <p>Preço medio: R$ 8,00 / kg</p>
+                    </div>
+                </div>
+
+                <!-- Uva -->
+                <div class="card" data-fruta="Uva" data-cidade="Marechal Cândido Rondon" data-lat="-24.5489"
+                    data-lng="-54.0481" onclick="abrirModal('Uva')">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.hPdHQRiHbUYXSC1m9_pudwHaFj?pid=Api&P=0&h=180"
+                        alt="Uva">
+                    <div class="card-info">
+                        <h3>Uva</h3>
+                        <p>Preço medio: R$ 12,00 / kg</p>
+                    </div>
+                </div>
+
+                <!-- Abacaxi -->
+                <div class="card" data-fruta="Abacaxi" data-cidade="Umuarama" data-lat="-23.7656" data-lng="-53.3200"
+                    onclick="abrirModal('Abacaxi')">
+                    <img src="https://dudacaetano.com/wp-content/uploads/2019/01/abacaxi-Fortalece-sistema-imunologico.jpg"
+                        alt="Abacaxi">
+                    <div class="card-info">
+                        <h3>Abacaxi</h3>
+                        <p>Preço medio: R$ 15,00 / un</p>
+                    </div>
+                </div>
+
+                <!-- Ameixa -->
+                <div class="card" data-fruta="Ameixa" data-cidade="Cascavel" data-lat="-24.9556" data-lng="-53.4556"
+                    onclick="abrirModal('Ameixa')">
+                    <img src="https://tse1.mm.bing.net/th/id/OIP.9DRCQP0eAgRX63PNJUxn1QHaE8?pid=Api&P=0&h=180"
+                        alt="Ameixa">
+                    <div class="card-info">
+                        <h3>Ameixa</h3>
+                        <p>Preço medio: R$ 20,00 / un</p>
+                    </div>
+                </div>
+
+                <!-- Manga -->
+                <div class="card" data-fruta="Manga" data-cidade="Toledo" data-lat="-24.7247" data-lng="-53.7406"
+                    onclick="abrirModal('Manga')">
+                    <img src="https://abrafrutas.org/wp-content/uploads/2019/12/manga_646447264-1024x683.jpg"
+                        alt="Manga">
+                    <div class="card-info">
+                        <h3>Manga</h3>
+                        <p>Preço medio: R$ 7,00 / un</p>
+                    </div>
+                </div>
+
+                <!-- Pêra -->
+                <div class="card" data-fruta="Pêra" data-cidade="Marechal Cândido Rondon" data-lat="-24.5489"
+                    data-lng="-54.0481" onclick="abrirModal('Pêra')">
+                    <img src="https://www.natursan.net/wp-content/beneficios-pera.jpg" alt="Pêra">
+                    <div class="card-info">
+                        <h3>Pêra</h3>
+                        <p>Preço medio: R$ 9,00 / kg</p>
+                    </div>
+                </div>
+
+                <!-- Melão Cantaloupe -->
+                <div class="card" data-fruta="Melão Cantaloupe" data-cidade="Foz do Iguaçu" data-lat="-25.5163"
+                    data-lng="-54.5850" onclick="abrirModal('Melão Cantaloupe')">
+                    <img src="https://paulistaoatacadista.vtexassets.com/arquivos/ids/304706/MelaoCantaloupe1300Kg.jpg?v=638080885151500000"
+                        alt="Melão Cantaloupe">
+                    <div class="card-info">
+                        <h3>Melão Cantaloupe</h3>
+                        <p>Preço medio: R$ 6,00 / un</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal" id="modalPedido">
+            <!-- Dentro do modal -->
+            <div class="modal-content">
+                <h2 id="tituloFruta">Pedido</h2>
+
+                <input type="number" id="quantidade" placeholder="Quantidade necessária">
+
+                <div class="unidades-opcoes">
+                    <label>
+                        <input type="checkbox" name="medida" value="kg"> KG
+                    </label>
+                    <label>
+                        <input type="checkbox" name="medida" value="un"> Unidades
+                    </label>
+                </div>
+
+                <label for="dataLimite">Data limite para envio</label>
+                <input type="date" name="date2" id="dataLimite">
+
+                <textarea id="observacoes" rows="3" placeholder="Observações"></textarea>
+
+                <div class="modal-actions">
+                    <button class="btn btn-salvar" onclick="salvarPedido()">Salvar</button>
+                    <button class="btn btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Navbar inferior -->
+    <div class="navbar">
+        <div><a href="index.html"><span class="icon icon-home"></span></a><span>Home</span></div>
+        <div><a href="buscas.html"><span class="icon icon-search"></span></a><span>Buscar</span></div>
+        <div><a href="meus_pedido.html"><span class="icon icon-cart"></span></a><span>Pedidos</span></div>
+        <div><a href="user_config.html"><span class="icon user-icon"></span></a><span>Menu</span></div>
+    </div>
+
+    <script>
+        const currentPage = window.location.pathname.split("/").pop();
+        const navDivs = document.querySelectorAll(".navbar div");
+
+        navDivs.forEach(div => {
+            const link = div.querySelector("a");
+            if (link && link.getAttribute("href") === currentPage) {
+                div.classList.add("active");
+            }
+        });
+
+
+        let frutaSelecionada = "";
+
+        function abrirModal(fruta) {
+            frutaSelecionada = fruta;
+            const modal = document.getElementById("modalPedido");
+            document.getElementById("tituloFruta").innerText = "Pedido de " + fruta;
+            modal.style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById("modalPedido").style.display = "none";
+        }
+
+        function salvarPedido() {
+            const quantidade = document.getElementById("quantidade").value;
+            const medida = document.querySelector('input[name="medida"]:checked')?.value || "";
+            const dataLimite = document.getElementById("dataLimite").value;
+            const observacoes = document.getElementById("observacoes").value;
+
+            console.log({
+                fruta: frutaSelecionada,
+                quantidade,
+                medida,
+                dataLimite,
+                observacoes
+            });
+
+            alert("Pedido de " + frutaSelecionada + " salvo!");
+            fecharModal();
+        }
+
+        const filtroFruta = document.getElementById('filtro-fruta');
+        const filtroCidade = document.getElementById('filtro-cidade');
+        const filtroProximo = document.getElementById('filtro-proximo');
+        const listaProdutos = document.getElementById('lista-produtos');
+        const cards = listaProdutos.querySelectorAll('.card');
+
+        // Função para calcular distância entre duas coordenadas
+        function distancia(lat1, lng1, lat2, lng2) {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function filtrarProdutos() {
+            const frutaVal = filtroFruta.value.toLowerCase();
+            const cidadeVal = filtroCidade.value.toLowerCase();
+
+            // Pegar localização do usuário
+            let userLat = null, userLng = null;
+            if (filtroProximo.checked && navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    userLat = pos.coords.latitude;
+                    userLng = pos.coords.longitude;
+                    aplicarFiltro();
+                });
+            } else {
+                aplicarFiltro();
+            }
+
+            function aplicarFiltro() {
+                cards.forEach(card => {
+                    const fruta = card.dataset.fruta.toLowerCase();
+                    const cidade = card.dataset.cidade.toLowerCase();
+                    let mostrar = fruta.includes(frutaVal) && cidade.includes(cidadeVal);
+
+                    if (filtroProximo.checked && userLat !== null && userLng !== null) {
+                        const lat = parseFloat(card.dataset.lat);
+                        const lng = parseFloat(card.dataset.lng);
+                        const d = distancia(userLat, userLng, lat, lng);
+                        if (d > 50) mostrar = false; // somente produtos até 50 km
+                    }
+
+                    card.style.display = mostrar ? 'block' : 'none';
+                });
+            }
+        }
+
+        filtroFruta.addEventListener('input', filtrarProdutos);
+        filtroCidade.addEventListener('input', filtrarProdutos);
+        filtroProximo.addEventListener('change', filtrarProdutos);
+    </script>
+</body>
+
+</html>

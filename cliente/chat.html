@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Simulador de Chat</title>
+    <style>
+        :root {
+            --bg: #e5ddd5;
+            --panel: #ffffff;
+            --accent: #25D366;
+            --me: #dcf8c6;
+            --them: #ffffff;
+            --muted: #8b8b8b;
+            --header-h: 64px;
+            --radius: 12px;
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(180deg, #2f4959, #344f55 120px), var(--bg);
+        }
+
+        .app {
+            max-width: 420px;
+            margin: 18px auto;
+            height: calc(100vh - 36px);
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            background: var(--panel);
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: linear-gradient(90deg, #2b8a5a, #1f8b59);
+            color: white;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: #eee;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .header .meta {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header .meta .name {
+            font-weight: 700;
+        }
+
+        .header .meta .status {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .header .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.12);
+            cursor: pointer
+        }
+
+        /* Chat area */
+        .chat {
+            flex: 1;
+            overflow: auto;
+            padding: 18px 12px 10px 12px;
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.03) 0, transparent 25%),
+                radial-gradient(circle at 90% 90%, rgba(0, 0, 0, 0.02) 0, transparent 20%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .day-sep {
+            align-self: center;
+            background: rgba(0, 0, 0, 0.06);
+            color: #333;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+
+        .msg-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            max-width: 100%;
+        }
+
+        .msg-row.me {
+            justify-content: flex-end;
+        }
+
+        .msg-row.they {
+            justify-content: flex-start;
+        }
+
+        .bubble {
+            max-width: 76%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+            position: relative;
+            font-size: 14px;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+        .bubble.small {
+            padding: 6px 8px;
+            font-size: 13px
+        }
+
+        /* Ponta da bolha (chevron) */
+        .msg-row.they .bubble {
+            background: var(--them);
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .msg-row.me .bubble {
+            background: var(--me);
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .meta-line {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 6px
+        }
+
+        .meta-line.me {
+            justify-content: flex-end
+        }
+
+        .meta-line.they {
+            justify-content: flex-start
+        }
+
+        .time {
+            font-size: 11px;
+            color: var(--muted);
+            opacity: 0.9
+        }
+
+        .ticks {
+            font-size: 12px;
+            color: var(--muted);
+            margin-left: 6px
+        }
+
+        /* Typing indicator */
+        .typing {
+            width: 84px;
+            height: 36px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+            font-size: 0;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #bbb;
+            opacity: 0.9;
+            animation: dot 1s infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: .15s
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: .30s
+        }
+
+        @keyframes dot {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 0.6
+            }
+        }
+
+        /* Input area */
+        .composer {
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.95));
+        }
+
+        .input {
+            flex: 1;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #f1f3f2;
+            border-radius: 999px;
+            padding: 8px 10px;
+            box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.03);
+        }
+
+        .input input {
+            border: 0;
+            outline: none;
+            background: transparent;
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .btn-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--accent);
+            color: white;
+            border: 0;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 6px 12px rgba(37, 211, 102, 0.15);
+        }
+
+        /* small screen tweaks */
+        @media (max-width:420px) {
+            :root {
+                --header-h: 56px
+            }
+
+            .app {
+                margin: 6px;
+                height: calc(100vh - 12px)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app" role="application" aria-label="Simulador de chat">
+        <!-- Header -->
+        <div class="header" role="banner">
+            <div class="avatar" aria-hidden="true">
+                <!-- Placeholder avatar (you can replace src) -->
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=7b7d3c66baf8b8f1c7f3cd11f0d6b8b6"
+                    alt="Avatar">
+            </div>
+            <div class="meta">
+                <div class="name">Debora</div>
+                <div class="status" id="statusLine">online</div>
+            </div>
+            <div class="actions">
+                <div class="icon-btn" title="Ligação" aria-hidden="true">📞</div>
+                <div class="icon-btn" title="Menu" aria-hidden="true">⋯</div>
+            </div>
+        </div>
+
+        <!-- Chat -->
+        <main class="chat" id="chat" role="region" aria-live="polite">
+            <div class="day-sep">Hoje</div>
+
+            <!-- Example: received -->
+            <div class="msg-row they">
+                <div class="avatar" style="width:34px;height:34px;">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=9b3f7b3f4f8b5b0f3a2a5b8b9c"
+                        alt="">
+                </div>
+                <div style="display:flex;flex-direction:column">
+                    <div class="bubble" id="example-1">Oi! Você já recebeu a entrega?</div>
+                    <div class="meta-line they"><span class="time">09:18</span></div>
+                </div>
+            </div>
+
+            <!-- Example: sent -->
+            <div class="msg-row me" style="margin-top:2px">
+                <div style="display:flex;flex-direction:column;align-items:flex-end">
+                    <div class="bubble">Recebi sim, obrigado! 😊</div>
+                    <div class="meta-line me"><span class="time">09:19</span><span class="ticks">✓✓</span></div>
+                </div>
+            </div>
+
+            <!-- Typing indicator (hidden by default) -->
+            <div class="msg-row they" id="typingRow" style="display:none;">
+                <div class="avatar" style="width:34px;height:34px;">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=9b3f7b3f4f8b5b0f3a2a5b8b9c"
+                        alt="">
+                </div>
+                <div>
+                    <div class="typing" aria-hidden="true">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Composer -->
+        <div class="composer" role="form" aria-label="Enviar mensagem">
+            <div class="input">
+                <button class="icon-btn" id="btnAttach" title="Anexar" aria-label="Anexar">📎</button>
+                <input id="messageInput" type="text" placeholder="Digite uma mensagem" aria-label="Mensagem" />
+                <button class="icon-btn" id="btnEmoji" title="Emoji" aria-hidden="true">😊</button>
+            </div>
+            <button class="btn-send" id="sendBtn" title="Enviar" aria-label="Enviar mensagem">➡</button>
+        </div>
+    </div>
+
+    
+
+
+    <script>
+        (function () {
+            const chat = document.getElementById('chat');
+            const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const typingRow = document.getElementById('typingRow');
+            const statusLine = document.getElementById('statusLine');
+
+            // Auto-scroll helper
+            function scrollToBottom(smooth = true) {
+                if (smooth) chat.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                else chat.lastElementChild?.scrollIntoView();
+            }
+
+            // Create a message row (me: boolean)
+            function createMessage(text, isMe = true, time = null) {
+                const row = document.createElement('div');
+                row.className = 'msg-row ' + (isMe ? 'me' : 'they');
+
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+                container.style.alignItems = isMe ? 'flex-end' : 'flex-start';
+
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.textContent = text;
+
+                const meta = document.createElement('div');
+                meta.className = 'meta-line ' + (isMe ? 'me' : 'they');
+
+                const ts = document.createElement('span');
+                ts.className = 'time';
+                const now = time ? new Date(time) : new Date();
+                ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                meta.appendChild(ts);
+
+                if (isMe) {
+                    const ticks = document.createElement('span');
+                    ticks.className = 'ticks';
+                    ticks.textContent = '✓✓';
+                    meta.appendChild(ticks);
+                }
+
+                container.appendChild(bubble);
+                container.appendChild(meta);
+
+                if (isMe) {
+                    row.appendChild(container);
+                } else {
+                    // include small avatar for other
+                    const avatar = document.createElement('div');
+                    avatar.className = 'avatar';
+                    avatar.style.width = '34px';
+                    avatar.style.height = '34px';
+                    avatar.style.flexShrink = '0';
+                    avatar.style.overflow = 'hidden';
+                    avatar.style.marginRight = '8px';
+                    avatar.innerHTML = '<img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=9b3f7b3f4f8b5b0f3a2a5b8b9c" alt="">';
+                    row.appendChild(avatar);
+                    row.appendChild(container);
+                }
+
+                return row;
+            }
+
+            // Send message
+            function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+                const msg = createMessage(text, true);
+                chat.appendChild(msg);
+                input.value = '';
+                scrollToBottom();
+                // simulate 'delivered' after a bit
+                setTimeout(() => {
+                    const tick = msg.querySelector('.ticks');
+                    if (tick) tick.style.opacity = '0.6';
+                }, 400);
+                // simulate reply
+                simulateReply(text);
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Simulated reply: shows typing, then replies
+            let replyTimeout;
+            function simulateReply(humanText) {
+                // show typing
+                typingRow.style.display = 'flex';
+                statusLine.textContent = 'digitando...';
+                chat.appendChild(typingRow); // move to bottom
+                scrollToBottom();
+
+                clearTimeout(replyTimeout);
+                replyTimeout = setTimeout(() => {
+                    typingRow.style.display = 'none';
+                    statusLine.textContent = 'online';
+
+                    // simple canned reply logic
+                    const lowered = humanText.toLowerCase();
+                    let resp = "Que bom!";
+                    if (lowered.includes('oi') || lowered.includes('olá')) resp = "Oi! Como posso ajudar?";
+                    else if (lowered.includes('preço') || lowered.includes('quanto')) resp = "O preço é R$ 10,00/kg.";
+                    else if (lowered.includes('obrigado') || lowered.includes('valeu')) resp = "Por nada! 😊";
+                    else if (lowered.includes('entrega')) resp = "Entrega prevista para amanhã.";
+                    else resp = "Certo — recebi sua mensagem.";
+
+                    chat.appendChild(createMessage(resp, false));
+                    scrollToBottom();
+                }, 1200 + Math.random() * 1400);
+            }
+
+            // initial scroll
+            window.addEventListener('load', () => scrollToBottom(false));
+
+            // Optional: clicking attach shows a simple file chooser
+            document.getElementById('btnAttach').addEventListener('click', () => {
+                alert('Simulação: aqui você abriria o seletor de arquivos / câmera.');
+            });
+
+            // accessibility: focus input on app click
+            document.querySelector('.app').addEventListener('click', (e) => {
+                if (!e.target.closest('.composer')) input.focus();
+            });
+
+        })();
+    </script>
+</body>
+
+</html>

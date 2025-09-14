@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Frutas do Momento</title>
+    <link rel="stylesheet" href="cssbase.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            padding-bottom: 60px;
+            background-image: url('morango.jpg');
+            background-repeat: no-repeat;
+            background-position: top center;
+           background-size: 100% 700px; 
+        }
+
+        .container {
+            padding: 15px;
+
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            cursor: pointer;
+            margin: 10px;
+
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 10px;
+        }
+
+        .card-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .card-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="espaco"></div>
+
+   <header>
+
+        <a href="chatlist.html"><i class="fa-solid fa-comments"></i></a>
+
+    </header>
+
+    <div class="card">
+        <!-- Seção: Frutas do Momento -->
+        <h2>🍓 Frutas do Momento</h2>
+        <div class="grid" id="frutasMomento"></div>
+
+        <!-- Seção: Novos Produtores -->
+        <h2>👨‍🌾 Novos Produtores na Região</h2>
+        <div class="grid" id="novosProdutores"></div>
+
+        <!-- Seção: Novas Frutas -->
+        <h2>🍉 Novas Frutas Disponíveis</h2>
+        <div class="grid" id="novasFrutas"></div>
+    </div>
+
+
+    <!-- Navbar inferior -->
+    <div class="navbar">
+        <div><a href="index.html"><span class="icon icon-home"></span></a><span>Home</span></div>
+        <div><a href="buscas.html"><span class="icon icon-search"></span></a><span>Buscar</span></div>
+        <div><a href="meus_pedido.html"><span class="icon icon-cart"></span></a><span>Pedidos</span></div>
+        <div><a href="user_config.html"><span class="icon user-icon"></span></a><span>Menu</span></div>
+    </div>
+
+    <script>
+        const currentPage = window.location.pathname.split("/").pop();
+        const navDivs = document.querySelectorAll(".navbar div");
+
+        navDivs.forEach(div => {
+            const link = div.querySelector("a");
+            if (link && link.getAttribute("href") === currentPage) {
+                div.classList.add("active");
+            }
+        });
+
+        // Dados de exemplo
+        const frutasMomento = [
+            { nome: 'Morango', img: 'https://www.vidarural.pt/wp-content/uploads/sites/5/2019/01/morango-vida-rural.jpg', preco: 'medio: R$10/kg' },
+            { nome: 'Uva', img: 'https://tse4.mm.bing.net/th/id/OIP.hPdHQRiHbUYXSC1m9_pudwHaFj?pid=Api&P=0&h=180', preco: 'medio: R$12/kg' },
+            { nome: 'Laranja', img: 'https://sabedoriapura.live/wp-content/uploads/2020/03/quais-sao-os-beneficios-da-laranja-para-a-saude-2-768x473.jpg', preco: 'medio: R$8/kg' }
+        ];
+
+        const novosProdutores = [
+            { nome: 'Sítio Verde', img: 'https://blog4.mfrural.com.br/wp-content/uploads/2020/08/pomar-jabuticabeira.jpg', descricao: 'Frutas orgânicas locais' },
+            { nome: 'Fazenda Sol', img: 'https://i0.wp.com/files.agro20.com.br/uploads/2020/10/pomar-5.jpg?resize=1024%2C682&ssl=1', descricao: 'Frutas frescas direto da fazenda' }
+        ];
+
+        const novasFrutas = [
+            { nome: 'Ameixa', img: 'https://tse1.mm.bing.net/th/id/OIP.9DRCQP0eAgRX63PNJUxn1QHaE8?pid=Api&P=0&h=180', preco: 'medio: R$20/un' },
+            { nome: 'Abacaxi', img: 'https://dudacaetano.com/wp-content/uploads/2019/01/abacaxi-Fortalece-sistema-imunologico.jpg', preco: 'medio: R$15/un' }
+        ];
+
+        function criarCard(item, tipo) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            if (tipo === 'produtor') {
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.nome}">
+                    <div class="card-info">
+                        <h3>${item.nome}</h3>
+                        <p>${item.descricao}</p>
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.nome}">
+                    <div class="card-info">
+                        <h3>${item.nome}</h3>
+                        <p>Preço: ${item.preco}</p>
+                    </div>
+                `;
+            }
+            return card;
+        }
+
+        const containerFrutas = document.getElementById('frutasMomento');
+        frutasMomento.forEach(f => containerFrutas.appendChild(criarCard(f, 'fruta')));
+
+        const containerProdutores = document.getElementById('novosProdutores');
+        novosProdutores.forEach(p => containerProdutores.appendChild(criarCard(p, 'produtor')));
+
+        const containerNovasFrutas = document.getElementById('novasFrutas');
+        novasFrutas.forEach(f => containerNovasFrutas.appendChild(criarCard(f, 'fruta')));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Aprenda a Cultivar</title>
+    <link rel="stylesheet" href="cssbase.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background: rgba(78, 78, 78, 0.447);
+            position: fixed;
+            right: 7vw;
+            width: 100px;
+            top: 2vh;
+            padding: 7px 15px;
+            border-radius: 10px;
+            z-index: 10;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 10px;
+        }
+
+        .card-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .card-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Modal */
+        #modalCurso {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #modalCurso .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #modalCurso h3 {
+            margin: 0;
+            text-align: center;
+        }
+
+        #modalCurso video {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        #modalCurso button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #modalCurso .close {
+            background: #e63946;
+            color: white;
+        }
+
+        #modalCurso .assistir {
+            background: #23a191;
+            color: white;
+        }
+
+        .mentoria {
+            background: #ffb703;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .busca-produtos {
+            margin-top: 20px;
+        }
+
+        .busca-produtos input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 100%;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .busca-produtos button {
+            width: 100%;
+            padding: 10px;
+            background: #23a191;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel .card {
+            min-width: 200px;
+        }
+
+        /* Modal Produto */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Inputs */
+        .modal input,
+        .modal textarea {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border 0.2s;
+        }
+
+        .modal input:focus,
+        .modal textarea:focus {
+            border: 1px solid #23a191;
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        /* Opções de unidade */
+        .unidades-opcoes {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
+
+        .unidades-opcoes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #f1f1f1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+        .unidades-opcoes label:hover {
+            background: #e0f7f4;
+        }
+
+        .unidades-opcoes input {
+            accent-color: #23a191;
+        }
+
+        /* Botões do modal */
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-salvar {
+            background: #23a191;
+            color: white;
+        }
+
+        .btn-salvar:hover {
+            background: #1c7c70;
+        }
+
+        .btn-cancelar {
+            background: #e63946;
+            color: white;
+        }
+
+        .btn-cancelar:hover {
+            background: #b71c1c;
+        }
+
+        .filtros {
+            display: flex;
+            gap: 10px;
+            margin: 10px;
+
+        }
+
+        .filtros input {
+            max-width: 48%;
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="chatlist.html"><i class="fa-solid fa-comments"></i></a>
+    </header>
+
+    <div class="container">
+        <h2>🎓 Cursos de Cultivo de Frutas</h2>
+        <div class="carousel" id="carouselCursos"></div>
+
+        <!-- Modal do Curso -->
+        <div id="modalCurso">
+            <div class="modal-content">
+                <h3 id="cursoTitulo">Curso</h3>
+                <p id="cursoDescricao"></p>
+                <video id="cursoVideo" controls>
+                    <source src="" type="video/mp4">
+                    Seu navegador não suporta vídeo.
+                </video>
+                <button class="close" onclick="fecharModal()">Fechar</button>
+            </div>
+        </div>
+
+        <!-- Mentoria -->
+        <div class="mentoria" onclick="abrirChat()">💬 Contratar Mentoria Especializada</div>
+
+        <!-- Busca Produtos -->
+
+        <div class="card as">
+
+            <h2 style="text-align: center;">Buscar Produtos Agricolas</h2>
+
+            <!-- Filtros -->
+            <div class="filtros">
+                <input type="text" id="filtro-produto" placeholder="Buscar por produto (mudas, sementes, adubo...)">
+                <input type="text" id="filtro-categoria" placeholder="Buscar por categoria">
+            </div>
+
+            <div class="produtos" id="lista-produtos">
+
+                <!-- Adubo -->
+                <div class="card" data-produto="Adubo Orgânico" data-categoria="Adubo"
+                    onclick="abrirModalProduto('Adubo Orgânico')">
+                    <img src="https://down-br.img.susercontent.com/file/sg-11134201-7rd3w-m6smdqrfzouy0c"
+                        alt="Adubo Orgânico">
+                    <div class="card-info">
+                        <h3>Adubo Orgânico</h3>
+                        <p>Preço médio: R$ 40,00 / saco</p>
+                    </div>
+                </div>
+
+                <!-- Sementes -->
+                <div class="card" data-produto="Mudas de Tomate" data-categoria="Mudas"
+                    onclick="abrirModalProduto('Mudas de Tomate')">
+                    <img src="https://static.vecteezy.com/ti/fotos-gratis/p2/19577583-mudas-de-tomate-e-pimentao-em-copos-de-papel-de-jornais-velhos-na-janela-plantas-de-crescimento-foto.jpg"
+                        alt="Mudas de Tomate">
+                    <div class="card-info">
+                        <h3>Mudas de Tomate</h3>
+                        <p>Preço médio: R$ 12,00 / pct</p>
+                    </div>
+                </div>
+
+                <!-- Mudas -->
+                <div class="card" data-produto="Muda de Laranja" data-categoria="Mudas"
+                    onclick="abrirModalProduto('Muda de Laranja')">
+                    <img src="https://a-static.mlcdn.com.br/800x560/muda-de-laranja-seleta-altura-de-040-cm-a-080-cm-plantas/amk-jardinagemepaisagismo/660770147/3cd8065ea6ab9bb4e42fd67404a8bf7a.jpeg"
+                        alt="Muda de Laranja">
+                    <div class="card-info">
+                        <h3>Muda de Laranja</h3>
+                        <p>Preço médio: R$ 25,00 / un</p>
+                    </div>
+                </div>
+
+                <!-- Ferramentas -->
+                <div class="card" data-produto="herbicida organico" data-categoria="herbicida"
+                    onclick="abrirModalProduto('herbicida organico')">
+                    <img src="https://images.tcdn.com.br/img/img_prod/1279573/adubo_supergarden_para_frutas_3kg_313_1_0cb68257a8a16840e545c0dd8507e077.jpg"
+                        alt="Enxada">
+                    <div class="card-info">
+                        <h3>herbicida organico</h3>
+                        <p>Preço médio: R$ 70,00 / un</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Modal Produto -->
+        <div class="modal" id="modalProduto">
+            <div class="modal-content">
+                <h2 id="tituloProduto">Produto</h2>
+
+                <input type="number" id="quantidadeProduto" placeholder="Quantidade desejada">
+
+                <div class="unidades-opcoes">
+                    <label>
+                        <input type="checkbox" name="medidaProduto" value="kg"> KG
+                    </label>
+                    <label>
+                        <input type="checkbox" name="medidaProduto" value="un"> Unidades
+                    </label>
+                    <label>
+                        <input type="checkbox" name="medidaProduto" value="pct"> Pacote
+                    </label>
+                </div>
+
+                <textarea id="observacoesProduto" rows="3" placeholder="Observações"></textarea>
+
+                <div class="modal-actions">
+                    <button class="btn btn-salvar" onclick="salvarPedidoProduto()">Salvar</button>
+                    <button class="btn btn-cancelar" onclick="fecharModalProduto()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navbar">
+        <div><a href="buscaProd.html"><span class="icon icon-home"></span></a><span>Home</span></div>
+
+        <div>
+            <a href="index.html"><i class="fa-solid fa-cart-shopping"></i></a>
+            <span>Pedidos</span>
+        </div>
+        <div>
+            <a href="estoque.html"><i class="fa-solid fa-box"></i></a>
+            <span>Estoque</span>
+        </div>
+        <div>
+            <a href="money.html"><i class="fa-solid fa-dollar-sign"></i></a>
+            <span>Financeiro</span>
+        </div>
+    </div>
+
+    <script>
+        let produtoSelecionado = "";
+
+        function abrirModalProduto(produto) {
+            produtoSelecionado = produto;
+            const modal = document.getElementById("modalProduto");
+            document.getElementById("tituloProduto").innerText = "Pedido de " + produto;
+            modal.style.display = "flex";
+        }
+
+        function fecharModalProduto() {
+            document.getElementById("modalProduto").style.display = "none";
+        }
+
+        function salvarPedidoProduto() {
+            const quantidade = document.getElementById("quantidadeProduto").value;
+            const medida = document.querySelector('input[name="medidaProduto"]:checked')?.value || "";
+            const observacoes = document.getElementById("observacoesProduto").value;
+
+            console.log({
+                produto: produtoSelecionado,
+                quantidade,
+                medida,
+                observacoes
+            });
+
+            alert("Pedido de " + produtoSelecionado + " salvo!");
+            fecharModalProduto();
+        }
+
+        // Filtros
+        const filtroProduto = document.getElementById('filtro-produto');
+        const filtroCategoria = document.getElementById('filtro-categoria');
+        const listaProdutos = document.getElementById('lista-produtos');
+        const cards = listaProdutos.querySelectorAll('.card');
+
+        function filtrarProdutos() {
+            const produtoVal = filtroProduto.value.toLowerCase();
+            const categoriaVal = filtroCategoria.value.toLowerCase();
+
+            cards.forEach(card => {
+                const produto = card.dataset.produto.toLowerCase();
+                const categoria = card.dataset.categoria.toLowerCase();
+                const mostrar = produto.includes(produtoVal) && categoria.includes(categoriaVal);
+                card.style.display = mostrar ? 'block' : 'none';
+            });
+        }
+
+        filtroProduto.addEventListener('input', filtrarProdutos);
+        filtroCategoria.addEventListener('input', filtrarProdutos);
+
+        // Dados de exemplo para cursos
+        const cursos = [
+            {
+                titulo: "Como cultivar Morango", descricao: "Aprenda as melhores técnicas de cultivo do morango.", video:
+                    "video/morango.mp4", img: "https://www.vidarural.pt/wp-content/uploads/sites/5/2019/01/morango-vida-rural.jpg"
+            },
+            {
+                titulo: "Como cultivar Abacaxi", descricao: "Tudo sobre plantio e cuidados com o abacaxi.", video:
+                    "video/abacaxi.mp4", img:
+                    "https://dudacaetano.com/wp-content/uploads/2019/01/abacaxi-Fortalece-sistema-imunologico.jpg"
+            },
+            {
+                titulo: "Como cultivar Uva", descricao: "Técnicas de irrigação e adubação para uva.", video: "video/uva.mp4", img:
+                    "https://tse4.mm.bing.net/th/id/OIP.hPdHQRiHbUYXSC1m9_pudwHaFj?pid=Api&P=0&h=180"
+            },
+            {
+                titulo: "Como cultivar Manga",
+                descricao: "Descubra as melhores práticas para cultivar mangas doces e saudáveis.",
+                video: "video/manga.mp4",
+                img: "https://tse1.mm.bing.net/th/id/OIP.q0iZKj1F7m1Zj04F7c5tFwHaE7?pid=Api&P=0&h=180"
+            },
+            {
+                titulo: "Como cultivar Goiaba",
+                descricao: "Aprenda a cuidar do goiabal desde o plantio até a colheita.",
+                video: "video/goiaba.mp4",
+                img: "https://lereaprender.com.br/wp-content/uploads/2019/11/goiaba.jpg"
+            }
+
+        ];
+
+        const carousel = document.getElementById('carouselCursos');
+
+        cursos.forEach(curso => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+    <img src="${curso.img}" alt="${curso.titulo}">
+    <div class="card-info">
+        <h3>${curso.titulo}</h3>
+    </div>
+    `;
+            card.onclick = () => abrirModal(curso);
+            carousel.appendChild(card);
+        });
+
+        const modal = document.getElementById('modalCurso');
+        const titulo = document.getElementById('cursoTitulo');
+        const descricao = document.getElementById('cursoDescricao');
+        const video = document.getElementById('cursoVideo');
+
+        function abrirModal(curso) {
+            titulo.textContent = curso.titulo;
+            descricao.textContent = curso.descricao;
+            video.src = curso.video;
+            modal.style.display = 'flex';
+        }
+
+        function fecharModal() {
+            video.pause();
+            modal.style.display = 'none';
+        }
+
+        function abrirChat() {
+            alert("Redirecionando para chat com agrônomo...");
+            // Aqui você pode redirecionar: window.location.href = 'chat.html';
+        }
+    </script>
+
+</body>
+
+</html>
